@@ -15,6 +15,7 @@ app
     .use(morgan('dev'))
   
 require('./src/routes/ebookroute')(app)
+require('./src/routes/categorieroute')(app)
 
 
 //initilise la bdd, attention remet tout a 0 !!!!
