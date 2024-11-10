@@ -1,4 +1,4 @@
-const { Ebook, Serie, Categorie } = require('../db/sequelize');
+const { Ebook, Serie, Categorie, Bibliotheque, User } = require('../db/sequelize');
 
 async function getAllCategories(req, res) {
     try {
@@ -26,8 +26,10 @@ async function getCategorieById(req, res) {
 
 async function createCategorie(req, res) {
     try {
+        console.log("Corps de la requête :", req.body); 
         const { nom } = req.body;
-
+        // Vérifiez la valeur de 'nom' que vous recevez
+        console.log("Nom reçu :", nom);
         // Créez une nouvelle catégorie
         const newCategorie = await Categorie.create({ nom });
 

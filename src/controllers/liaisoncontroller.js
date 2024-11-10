@@ -1,4 +1,4 @@
-const { Ebook, Serie, Categorie } = require('../db/sequelize');
+const { Ebook, Serie, Categorie, Bibliotheque, User } = require('../db/sequelize');
 
 async function getEbooksByCategorie(req, res) {
     try {

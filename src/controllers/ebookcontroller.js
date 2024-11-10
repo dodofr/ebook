@@ -1,4 +1,4 @@
-const { Ebook, Serie, Categorie } = require('../db/sequelize');
+const { Ebook, Serie, Categorie, Bibliotheque, User } = require('../db/sequelize');
 const fs = require('fs');
 const path = require('path');
 

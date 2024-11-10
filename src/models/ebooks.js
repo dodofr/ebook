@@ -24,10 +24,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        lu: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
-        },
         lienTelechargement: {
             type: DataTypes.STRING,
             allowNull: true,
@@ -40,6 +36,10 @@ module.exports = (sequelize, DataTypes) => {
     Ebook.associate = (models) => {
         Ebook.belongsTo(models.Serie, { foreignKey: 'serieId' });
         Ebook.belongsToMany(models.Categorie, { through: 'EbookCategories' });
+        Ebook.belongsToMany(models.User, {
+            through: 'Bibliotheque',
+            foreignKey: 'ebookId',
+        });
     };
 
     return Ebook;
