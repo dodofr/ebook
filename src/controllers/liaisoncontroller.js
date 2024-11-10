@@ -42,3 +42,7 @@ async function getEbooksBySerie(req, res) {
     }
 }
 
+module.exports = {
+    getEbooksByCategorie,
+    getEbooksBySerie
+};

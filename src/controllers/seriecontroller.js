@@ -75,3 +75,11 @@ async function deleteSerie(req, res) {
         res.status(500).json({ message: error.message });
     }
 }
+
+module.exports = {
+    getAllSeries,
+    getSerieById,
+    updateSerie,
+    createSerie,
+    deleteSerie
+};

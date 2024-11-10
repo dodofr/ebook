@@ -16,6 +16,8 @@ app
   
 require('./src/routes/ebookroute')(app)
 require('./src/routes/categorieroute')(app)
+require('./src/routes/serieroute')(app)
+require('./src/routes/liaisonroute')(app)
 
 
 //initilise la bdd, attention remet tout a 0 !!!!
