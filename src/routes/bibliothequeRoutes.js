@@ -10,5 +10,6 @@ module.exports = (app) => {
     app.post('/api/bibliotheque', authenticateToken, addEbookToBibliotheque);
     app.put('/api/bibliotheque', authenticateToken, updateBibliothequeEntry);
     app.get('/api/bibliotheque', authenticateToken, getUserBibliotheque);
+    app.get('/api/bibliotheque/:userId', authenticateToken,authorizeAdmin, getUserBibliotheque);
     app.delete('/api/bibliotheque/:ebookId', authenticateToken, removeEbookFromBibliotheque); // Suppression par ebookId
 };

@@ -32,13 +32,12 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: true,
     });
 
-    // Associations
     Ebook.associate = (models) => {
         Ebook.belongsTo(models.Serie, { foreignKey: 'serieId' });
         Ebook.belongsToMany(models.Categorie, { through: 'EbookCategories' });
         Ebook.belongsToMany(models.User, {
             through: 'Bibliotheque',
-            foreignKey: 'ebookId',
+            foreignKey: 'bibEbookId',
         });
     };
 

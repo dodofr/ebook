@@ -18,16 +18,18 @@ module.exports = (sequelize, DataTypes) => {
         },
         role: {
             type: DataTypes.STRING,
-            defaultValue: 'user', // 'user' ou 'admin'
+            defaultValue: 'user',
         },
     }, {
         timestamps: true,
     });
 
-    // Associations
     User.associate = function(models) {
-        // Modifier la clé étrangère pour correspondre à la clé utilisée dans Bibliotheque
         User.hasMany(models.Bibliotheque, { foreignKey: 'bibUserId' });
+        User.belongsToMany(models.Ebook, {
+            through: 'Bibliotheque',
+            foreignKey: 'bibUserId',
+        });
     };
 
     return User;

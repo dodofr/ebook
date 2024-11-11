@@ -27,4 +27,7 @@ async function logout(req, res) {
     res.status(200).json({ message: "Déconnexion réussie" });
 }
 
+
+
+
 module.exports = { login, logout };

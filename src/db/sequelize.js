@@ -44,5 +44,5 @@ module.exports = {
     Serie,
     Categorie,
     User,
-    Bibliotheque,
+    Bibliotheque
 };

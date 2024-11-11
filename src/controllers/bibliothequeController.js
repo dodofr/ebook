@@ -5,6 +5,11 @@ async function addEbookToBibliotheque(req, res) {
     try {
         const userId = req.user.id;
         const { ebookId, statut, notePersonnelle } = req.body;
+        console.log("Corps de la requête:", req.body);
+        console.log("userId:", userId);
+        console.log("ebookId:", ebookId);
+        console.log("statut:", statut);
+        console.log("notePersonnelle:", notePersonnelle);
 
         // Vérifier si l'ebook existe
         const ebook = await Ebook.findByPk(ebookId);
@@ -46,24 +51,25 @@ async function updateBibliothequeEntry(req, res) {
     }
 }
 
-// Obtenir tous les ebooks dans la bibliothèque de l'utilisateur
 async function getUserBibliotheque(req, res) {
     try {
-        const userId = req.user.id; // ID de l'utilisateur connecté
+        const isAdmin = req.user.role === 'admin'; // Vérifie si l'utilisateur est admin
+        const userId = isAdmin && req.params.userId ? req.params.userId : req.user.id; // Utilise l'ID de l'admin ou de l'utilisateur connecté
 
         // Rechercher les ebooks de la bibliothèque de l'utilisateur
         const bibliotheque = await Bibliotheque.findAll({
-            where: { bibUserId: userId }, // Utiliser la clé étrangère modifiée
+            where: { bibUserId: userId }, // Utiliser l'ID correct de l'utilisateur
             include: [
                 {
                     model: Ebook,
+                    as: 'ebook', // Spécifier l'alias pour l'ebook
                     include: [{ model: Categorie }, { model: Serie }],
                 },
             ],
         });
 
         if (bibliotheque.length === 0) {
-            return res.status(404).json({ message: "Votre bibliothèque est vide." });
+            return res.status(404).json({ message: "La bibliothèque est vide." });
         }
 
         res.status(200).json(bibliotheque);
@@ -71,6 +77,8 @@ async function getUserBibliotheque(req, res) {
         res.status(500).json({ message: error.message });
     }
 }
+
+
 
 // Supprimer un ebook de la bibliothèque de l'utilisateur
 async function removeEbookFromBibliotheque(req, res) {
