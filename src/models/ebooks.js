@@ -20,9 +20,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: true,
         },
-        auteur: {
+        imageCouverture: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         lienTelechargement: {
             type: DataTypes.STRING,
@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Ebook.associate = (models) => {
+        Ebook.belongsTo(models.Auteur, { foreignKey: 'auteurId', as: 'auteur' });
         Ebook.belongsTo(models.Serie, { foreignKey: 'serieId' });
         Ebook.belongsToMany(models.Categorie, { through: 'EbookCategories' });
         Ebook.belongsToMany(models.User, {

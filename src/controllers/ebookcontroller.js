@@ -1,36 +1,43 @@
-const { Ebook, Serie, Categorie, Bibliotheque, User } = require('../db/sequelize');
+const { Ebook, Serie, Categorie, Bibliotheque, User, Auteur } = require('../db/sequelize');
 const fs = require('fs');
 const path = require('path');
 
 async function createEbookcontroller(req, res) {
     try {
-        const { titre, description, note, commentaire, auteur, serieNom, categorieIds } = req.body;
-        const lienTelechargement = req.file ? `../../uploads/ebooks/${req.file.filename}` : null;
+        const { titre, description, note, commentaire, auteurNom, serieNom, categorieIds } = req.body;
+        const fichierEbook = req.files['ebook'] ? `../../uploads/ebooks/${req.files['ebook'][0].filename}` : null;
+        const imageCouverture = req.files['couverture'] ? `../../uploads/couvertures/${req.files['couverture'][0].filename}` : null;
 
-        // Vérifier si categorieIds est une chaîne et le parser
         let parsedCategorieIds = Array.isArray(categorieIds) ? categorieIds : JSON.parse(categorieIds);
 
-        // Vérifiez si la série existe, sinon créez-la
+        // Gestion de l'auteur
+        let auteur = await Auteur.findOne({ where: { nom: auteurNom } });
+        if (!auteur) {
+            auteur = await Auteur.create({ nom: auteurNom });
+        }
+
+        // Gestion de la série
         let serie = await Serie.findOne({ where: { nom: serieNom } });
         if (!serie) {
             serie = await Serie.create({ nom: serieNom });
         }
 
-        // Créez l'ebook en utilisant l'ID de la série
+        // Créer l'ebook
         const newEbook = await Ebook.create({
             titre,
             description,
             note,
             commentaire,
-            auteur,
-            serieId: serie.id, // Utilisez l'ID de la série
-            lienTelechargement,
+            auteurId: auteur.id,
+            serieId: serie.id,
+            lienTelechargement: fichierEbook,
+            imageCouverture,
         });
 
-        // Associez les catégories si fournies
+        // Associer les catégories
         if (parsedCategorieIds && parsedCategorieIds.length > 0) {
             const categories = await Categorie.findAll({ where: { id: parsedCategorieIds } });
-            await newEbook.setCategories(categories);  // Utilisation de setCategories pour une relation n:m
+            await newEbook.setCategories(categories);
         }
 
         res.status(201).json(newEbook);
@@ -40,12 +47,11 @@ async function createEbookcontroller(req, res) {
 }
 
 
-
-// Récupérer tous les ebooks
 async function getAllEbooks(req, res) {
     try {
         const ebooks = await Ebook.findAll({
             include: [
+                { model: Auteur, as: 'auteur', attributes: ['nom'] },
                 { model: Serie, attributes: ['nom'] },
                 { model: Categorie, attributes: ['nom'], through: { attributes: [] } }
             ]
@@ -56,12 +62,12 @@ async function getAllEbooks(req, res) {
     }
 }
 
-// Récupérer un ebook par ID
 async function getEbookById(req, res) {
     try {
         const { id } = req.params;
         const ebook = await Ebook.findByPk(id, {
             include: [
+                { model: Auteur, as: 'auteur', attributes: ['nom'] },
                 { model: Serie, attributes: ['nom'] },
                 { model: Categorie, attributes: ['nom'], through: { attributes: [] } }
             ]
@@ -76,6 +82,7 @@ async function getEbookById(req, res) {
         res.status(500).json({ message: error.message });
     }
 }
+
 async function updateEbook(req, res) {
     try {
         const { id } = req.params;
@@ -165,24 +172,26 @@ async function deleteEbook(req, res) {
             return res.status(404).json({ message: "Ebook non trouvé" });
         }
 
-        // Corriger le chemin du fichier
-        const filePath = path.join(__dirname, '../../uploads/ebooks', path.basename(ebook.lienTelechargement));
+        // Supprimer le fichier ebook (PDF, EPUB, MOBI)
+        const ebookPath = path.join(__dirname, '../../uploads/ebooks', path.basename(ebook.lienTelechargement));
+        if (fs.existsSync(ebookPath)) {
+            fs.unlinkSync(ebookPath);
+        }
 
-        // Vérifier si le fichier existe et le supprimer
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-            console.log(`Fichier supprimé : ${filePath}`);
-        } else {
-            console.log(`Fichier introuvable : ${filePath}`);
+        // Supprimer l'image de couverture
+        const imagePath = path.join(__dirname, '../../uploads/couvertures', path.basename(ebook.imageCouverture));
+        if (fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath);
         }
 
         // Supprimer l'ebook de la base de données
         await ebook.destroy();
-        res.status(204).json({ message: "Ebook et fichier supprimés avec succès" });
+        res.status(204).json({ message: "Ebook et fichiers supprimés avec succès" });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 }
+
 
 module.exports = {
     createEbookcontroller,

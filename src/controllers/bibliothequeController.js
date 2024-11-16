@@ -1,4 +1,4 @@
-const { Ebook, Serie, Categorie, Bibliotheque, User } = require('../db/sequelize');
+const { Ebook, Serie, Categorie, Bibliotheque, User,Auteur } = require('../db/sequelize');
 
 // Ajouter un ebook à la bibliothèque de l'utilisateur
 async function addEbookToBibliotheque(req, res) {

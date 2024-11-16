@@ -21,7 +21,8 @@ require('./src/routes/liaisonroute')(app)
 require('./src/routes/userroute')(app)
 require('./src/routes/bibliothequeRoutes')(app)
 require('./src/routes/authRoutes')(app)
-
+require('./src/routes/auteurroute')(app)
+require('./src/routes/aleatoireroute')(app)
 
 //initilise la bdd, attention remet tout a 0 !!!!
 //sequelize.initDb()

@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { Ebook, Serie, Categorie, Bibliotheque, User } = require('../db/sequelize');
+const { Ebook, Serie, Categorie, Bibliotheque, User, Auteur } = require('../db/sequelize');
 
 // Inscription
 async function registerUser(req, res) {

@@ -4,6 +4,7 @@ const CategorieModel = require("../models/categorie");
 const SerieModel = require("../models/serie");
 const BibliothequeModel = require("../models/bibliotheque");
 const UserModel = require("../models/user");
+const AuteurModel = require('../models/auteur');
 
 const sequelize = new Sequelize(`mariadb://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:3305/${process.env.DB_NAME}`, {
     dialectOptions: {
@@ -17,13 +18,15 @@ const Serie = SerieModel(sequelize, DataTypes);
 const Categorie = CategorieModel(sequelize, DataTypes);
 const Bibliotheque = BibliothequeModel(sequelize, DataTypes);
 const User = UserModel(sequelize, DataTypes);
+const Auteur = AuteurModel(sequelize, DataTypes);
 
 // Appeler les fonctions d'association
-Ebook.associate({ Serie, Categorie, User, Bibliotheque });
+Ebook.associate({ Serie, Categorie, User, Bibliotheque,Auteur });
 Serie.associate({ Ebook });
 Categorie.associate({ Ebook });
 User.associate({ Bibliotheque, Ebook });
 Bibliotheque.associate({ User, Ebook });
+Auteur.associate({ Ebook });
 
 // Fonction d'initialisation/synchronisation de la base de données
 const initDb = async () => {
@@ -44,5 +47,6 @@ module.exports = {
     Serie,
     Categorie,
     User,
-    Bibliotheque
+    Bibliotheque,
+    Auteur
 };
